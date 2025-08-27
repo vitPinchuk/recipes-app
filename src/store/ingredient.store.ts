@@ -47,7 +47,14 @@ export const useIngredientStore = create<IngredientState>((set) => ({
           isLoading: false,
         }));
       } else {
-        set({ error: result.error, isLoading: false });
+        const errorMessage =
+          typeof result.error === "string"
+            ? result.error
+            : result.error instanceof Error
+            ? result.error.message
+            : "Unknown error";
+
+        set({ error: errorMessage, isLoading: false });
       }
     } catch (error) {
       console.error("error", error);
