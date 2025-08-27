@@ -1,17 +1,7 @@
-import z, { number, object, string } from "zod";
+import { z } from "zod";
 
-export const signInSchema = object({
-  email: string({ required_error: "Email is required" })
-    .min(1, "Email is required")
-    .email("Invalid email"),
-  password: string({ required_error: "Password is required" })
-    .min(1, "Password is required")
-    .min(6, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
-});
-
-export const ingredientSchema = object({
-  name: string().min(1, "Name is required"),
+export const ingredientSchema = z.object({
+  name: z.string().min(1, "Name is required"),
   category: z.enum([
     "VEGETABLES",
     "FRUITS",
@@ -21,8 +11,10 @@ export const ingredientSchema = object({
     "OTHER",
   ]),
   unit: z.enum(["GRAMS", "KILOGRAMS", "LITERS", "MILLILITERS", "PIECES"]),
-  pricePerUnit: number({ invalid_type_error: "Price must be a number" })
-    .min(0, "Price must be positive")
-    .nullable(),
+  pricePerUnit: z
+    .number()
+    .min(0, { message: "Price must be positive" })
+    .nullable()
+    .or(z.nan().transform(() => null)),
   description: z.string().optional(),
 });
